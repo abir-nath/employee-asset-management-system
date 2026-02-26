@@ -48,12 +48,16 @@ public class EmployeesController : Controller
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null)
+        {
             return NotFound();
+        }
 
         var employee = await _context.Employees.FindAsync(id);
 
         if (employee == null || !employee.IsActive)
+        {
             return NotFound();
+        }
 
         return View(employee);
     }
@@ -63,7 +67,9 @@ public class EmployeesController : Controller
     public async Task<IActionResult> Edit(int id, Employee employee)
     {
         if (id != employee.Id)
+        {
             return NotFound();
+        }
 
         if (ModelState.IsValid)
         {
@@ -77,12 +83,30 @@ public class EmployeesController : Controller
             catch (DbUpdateConcurrencyException)
             {
                 if (!_context.Employees.Any(e => e.Id == employee.Id))
+                {
                     return NotFound();
+                }
                 else
+                {
                     throw;
+                }
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        return View(employee);
+    }
+
+    public async Task<IActionResult> Details(int id)
+    {
+        var employee = await _context.Employees
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e => e.Id == id && e.IsDeleted == false);
+
+        if (employee == null)
+        {
+            return NotFound();
         }
 
         return View(employee);
