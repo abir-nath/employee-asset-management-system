@@ -1,0 +1,39 @@
+﻿@model EmployeeAssetManagementSystem.Models.Employee
+
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+
+        <div class="mb-4">
+            <label asp-for="FullName" class="form-label fw-semibold">
+                Full Name <span class="text-danger">*</span>
+            </label>
+            <input asp-for="FullName" class="form-control form-control-lg" placeholder="Enter full name" />
+            <span asp-validation-for="FullName" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-4">
+            <label asp-for="Email" class="form-label fw-semibold">
+                Email Address <span class="text-danger">*</span>
+            </label>
+            <input asp-for="Email" class="form-control form-control-lg" placeholder="example@company.com" />
+            <span asp-validation-for="Email" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-4">
+            <label asp-for="Department" class="form-label fw-semibold">
+                Department <span class="text-danger">*</span>
+            </label>
+            <input asp-for="Department" class="form-control form-control-lg" placeholder="Enter department" />
+            <span asp-validation-for="Department" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-4">
+            <label asp-for="JoiningDate" class="form-label fw-semibold">
+                Joining Date
+            </label>
+            <input asp-for="JoiningDate" type="date" class="form-control form-control-lg" />
+            <span asp-validation-for="JoiningDate" class="text-danger small"></span>
+        </div>
+
+    </div>
+</div>

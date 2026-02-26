@@ -1,4 +1,5 @@
 ﻿using EmployeeAssetManagementSystem.Data;
+using EmployeeAssetManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,12 +14,79 @@ public class EmployeesController : Controller
         _context = context;
     }
 
-    public async Task<IActionResult> ListEmployees()
+    public async Task<IActionResult> Index()
     {
         var employees = await _context.Employees
             .Where(e => e.IsActive)
             .ToListAsync();
 
         return View(employees);
+    }
+
+    public IActionResult Create()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(Employee employee)
+    {
+        if (ModelState.IsValid)
+        {
+            employee.IsActive = true;
+
+            _context.Add(employee);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Employee created successfully!";
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        return View(employee);
+    }
+
+    public async Task<IActionResult> Edit(int? id)
+    {
+        if (id == null)
+            return NotFound();
+
+        var employee = await _context.Employees.FindAsync(id);
+
+        if (employee == null || !employee.IsActive)
+            return NotFound();
+
+        return View(employee);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, Employee employee)
+    {
+        if (id != employee.Id)
+            return NotFound();
+
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                _context.Update(employee);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Employee updated successfully!";
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Employees.Any(e => e.Id == employee.Id))
+                    return NotFound();
+                else
+                    throw;
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        return View(employee);
     }
 }
