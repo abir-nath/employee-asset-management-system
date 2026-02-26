@@ -102,7 +102,7 @@ public class EmployeesController : Controller
     {
         var employee = await _context.Employees
             .AsNoTracking()
-            .FirstOrDefaultAsync(e => e.Id == id && e.IsDeleted == false);
+            .FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
 
         if (employee == null)
         {
@@ -110,5 +110,26 @@ public class EmployeesController : Controller
         }
 
         return View(employee);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var employee = await _context.Employees
+            .FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
+
+        if (employee == null)
+        {
+            return NotFound();
+        }
+
+        employee.IsDeleted = true;
+
+        await _context.SaveChangesAsync();
+
+        TempData["DeleteMessage"] = "Employee deleted successfully!";
+
+        return RedirectToAction(nameof(Index));
     }
 }
