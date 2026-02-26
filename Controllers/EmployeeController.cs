@@ -12,4 +12,13 @@ public class EmployeesController : Controller
     {
         _context = context;
     }
+
+    public async Task<IActionResult> ListEmployees()
+    {
+        var employees = await _context.Employees
+            .Where(e => e.IsActive)
+            .ToListAsync();
+
+        return View(employees);
+    }
 }
