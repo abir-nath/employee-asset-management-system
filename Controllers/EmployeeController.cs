@@ -21,4 +21,18 @@ public class EmployeesController : Controller
 
         return View(employees);
     }
+
+    public async Task<IActionResult> Details(int id)
+    {
+        var employee = await _context.Employees
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e => e.Id == id);
+
+        if (employee == null)
+        {
+            return NotFound();
+        }
+
+        return View(employee);
+    }
 }
