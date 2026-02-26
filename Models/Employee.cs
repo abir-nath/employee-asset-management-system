@@ -21,8 +21,10 @@ public class Employee
     [DataType(DataType.Date)]
     public DateTime JoiningDate { get; set; }
 
+    [Required(ErrorMessage = "Status is required")]
     public bool IsActive { get; set; } = true;
 
-    // Navigation property
+    public bool IsDeleted { get; set; } = false;
+
     public ICollection<EmployeeAsset>? EmployeeAssets { get; set; }
 }

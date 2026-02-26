@@ -35,5 +35,19 @@
             <span asp-validation-for="JoiningDate" class="text-danger small"></span>
         </div>
 
+        <div class="mb-4">
+            <label asp-for="IsActive" class="form-label fw-semibold">
+                Status <span class="text-danger">*</span>
+            </label>
+
+            <select asp-for="IsActive" class="form-select form-select-lg">
+                <option value="">-- Select Status --</option>
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
+            </select>
+
+            <span asp-validation-for="IsActive" class="text-danger small"></span>
+        </div>
+
     </div>
 </div>
