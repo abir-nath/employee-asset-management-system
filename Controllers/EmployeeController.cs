@@ -17,7 +17,7 @@ public class EmployeesController : Controller
     public async Task<IActionResult> Index()
     {
         var employees = await _context.Employees
-            .Where(e => e.IsActive)
+            .Where(e => !e.IsDeleted)
             .ToListAsync();
 
         return View(employees);
@@ -34,8 +34,6 @@ public class EmployeesController : Controller
     {
         if (ModelState.IsValid)
         {
-            employee.IsActive = true;
-
             _context.Add(employee);
             await _context.SaveChangesAsync();
 
