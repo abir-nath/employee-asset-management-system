@@ -1,4 +1,14 @@
-﻿@model IEnumerable<EmployeeAssetManagementSystem.Models.Employee>
+﻿@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-check-circle me-2"></i>
+        @TempData["SuccessMessage"]
+
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@model IEnumerable<EmployeeAssetManagementSystem.Models.Employee>
 
 @{
     ViewData["Title"] = "Employees";
@@ -79,7 +89,22 @@
     </div>
 </div>
 
-<!-- DELETE CONFIRMATION MODAL -->
+
+@section Scripts {
+
+    <script>
+        window.setTimeout(function () {
+            var alert = document.querySelector(".alert");
+            if (alert) {
+                var bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }
+        }, 4000); 
+    </script>
+
+}
+
+
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
