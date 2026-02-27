@@ -38,23 +38,23 @@ public class AssetsController : Controller
             ViewData["AssetTypes"] = new SelectList(new[] { "Monitor", "Laptop", "Keyboard", "Mouse", "Headset" });
             return View(asset);
         }
-            var serialExists = await _context.Assets
-                .AnyAsync(a => a.SerialNumber == asset.SerialNumber && !a.IsDeleted);
+        var serialExists = await _context.Assets
+            .AnyAsync(a => a.SerialNumber == asset.SerialNumber && !a.IsDeleted);
 
-            if (serialExists)
-            {
-                ModelState.AddModelError("SerialNumber", "Serial Number already exists.");
-                ViewData["AssetTypes"] = new SelectList(new[] { "Monitor", "Laptop", "Keyboard", "Mouse", "Headset" });
-                return View(asset);
-            }
+        if (serialExists)
+        {
+            ModelState.AddModelError("SerialNumber", "Serial Number already exists.");
+            ViewData["AssetTypes"] = new SelectList(new[] { "Monitor", "Laptop", "Keyboard", "Mouse", "Headset" });
+            return View(asset);
+        }
 
-            asset.IsAvailable = true;
+        asset.IsAvailable = true;
 
-            _context.Add(asset);
-            await _context.SaveChangesAsync();
+        _context.Add(asset);
+        await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Asset created successfully!";
-            return RedirectToAction(nameof(Index));
+        TempData["SuccessMessage"] = "Asset created successfully!";
+        return RedirectToAction(nameof(Index));
     }
 
     public async Task<IActionResult> Edit(int id)
@@ -62,7 +62,9 @@ public class AssetsController : Controller
         var asset = await _context.Assets.FindAsync(id);
 
         if (asset == null || asset.IsDeleted)
+        {
             return NotFound();
+        }
 
         ViewData["AssetTypes"] = new SelectList(new[] { "Monitor", "Laptop", "Keyboard", "Mouse", "Headset" });
 
@@ -74,29 +76,66 @@ public class AssetsController : Controller
     public async Task<IActionResult> Edit(int id, Asset asset)
     {
         if (id != asset.Id)
+        {
             return NotFound();
+        }
 
         if (!ModelState.IsValid)
         {
             ViewData["AssetTypes"] = new SelectList(new[] { "Monitor", "Laptop", "Keyboard", "Mouse", "Headset" });
             return View(asset);
         }
-            var serialExists = await _context.Assets
-                .AnyAsync(a => a.SerialNumber == asset.SerialNumber
-                            && a.Id != asset.Id
-                            && !a.IsDeleted);
+        var serialExists = await _context.Assets
+            .AnyAsync(a => a.SerialNumber == asset.SerialNumber
+                        && a.Id != asset.Id
+                        && !a.IsDeleted);
 
-            if (serialExists)
-            {
-                ModelState.AddModelError("SerialNumber", "Serial Number already exists.");
-                ViewData["AssetTypes"] = new SelectList(new[] { "Monitor", "Laptop", "Keyboard", "Mouse", "Headset" });
-                return View(asset);
-            }
+        if (serialExists)
+        {
+            ModelState.AddModelError("SerialNumber", "Serial Number already exists.");
+            ViewData["AssetTypes"] = new SelectList(new[] { "Monitor", "Laptop", "Keyboard", "Mouse", "Headset" });
+            return View(asset);
+        }
 
-            _context.Update(asset);
-            await _context.SaveChangesAsync();
+        _context.Update(asset);
+        await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Asset updated successfully!";
-            return RedirectToAction(nameof(Index));
+        TempData["SuccessMessage"] = "Asset updated successfully!";
+        return RedirectToAction(nameof(Index));
+    }
+
+    public async Task<IActionResult> Details(int id)
+    {
+        var asset = await _context.Assets
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
+
+        if (asset == null)
+        {
+            return NotFound();
+        }
+
+        return View(asset);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var asset = await _context.Assets
+            .FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
+
+        if (asset == null)
+        {
+            return NotFound();
+        }
+
+        asset.IsDeleted = true;
+
+        await _context.SaveChangesAsync();
+
+        TempData["DeleteMessage"] = "Asset deleted successfully!";
+
+        return RedirectToAction(nameof(Index));
     }
 }
