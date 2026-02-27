@@ -102,6 +102,9 @@ public class EmployeesController : Controller
     {
         var employee = await _context.Employees
             .AsNoTracking()
+            .Include(e => e.EmployeeAssets
+                .Where(ea => ea.Status != "Returned"))
+                .ThenInclude(ea => ea.Asset)
             .FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
 
         if (employee == null)

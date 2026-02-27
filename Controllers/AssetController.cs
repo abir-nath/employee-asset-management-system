@@ -108,6 +108,8 @@ public class AssetsController : Controller
     {
         var asset = await _context.Assets
             .AsNoTracking()
+            .Include(e => e.EmployeeAssets)
+                .ThenInclude(ae => ae.Employee)
             .FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
 
         if (asset == null)
