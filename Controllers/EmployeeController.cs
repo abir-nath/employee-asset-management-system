@@ -1,5 +1,6 @@
 ﻿using EmployeeAssetManagementSystem.Data;
 using EmployeeAssetManagementSystem.Models;
+using EmployeeAssetManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -102,10 +103,29 @@ public class EmployeesController : Controller
     {
         var employee = await _context.Employees
             .AsNoTracking()
-            .Include(e => e.EmployeeAssets
-                .Where(ea => ea.Status != "Returned"))
-                .ThenInclude(ea => ea.Asset)
-            .FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
+            .Where(e => e.Id == id && !e.IsDeleted)
+            .Select(e => new EmployeeDetailsViewModel
+            {
+                Id = e.Id,
+                FullName = e.FullName,
+                Email = e.Email,
+                Department = e.Department,
+                JoiningDate = e.JoiningDate,
+                IsActive = e.IsActive,
+                //Employee Assets
+                Assets = e.EmployeeAssets
+                    .Where(ea => ea.Status != "Returned")
+                    .Select(ea => new EmployeeAssetViewModel
+                    {
+                        AssetName = ea.Asset != null ? ea.Asset.AssetName : "",
+                        AssetType = ea.Asset != null ? ea.Asset.AssetType : "",
+                        AssignedDate = ea.AssignedDate,
+                        ReturnedDate = ea.ReturnedDate,
+                        Status = ea.Status
+                    })
+                    .ToList()
+            })
+    .FirstOrDefaultAsync();
 
         if (employee == null)
         {

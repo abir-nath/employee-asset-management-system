@@ -1,4 +1,4 @@
-﻿@model EmployeeAssetManagementSystem.Models.Asset
+﻿@model EmployeeAssetManagementSystem.ViewModels.AssetDetailsViewModel
 
 @{
     ViewData["Title"] = "Asset Details";
@@ -49,11 +49,20 @@
                     @foreach (var ea in Model.EmployeeAssets)
                     {
                         <tr>
-                            <td>@ea.Employee?.Id</td>
-                            <td>@ea.Employee?.FullName</td>
-                            <td>@ea.AssignedDate.ToString("dd MMM yyyy")</td>
+                            <td>@ea?.EmployeeId</td>
+                            <td>@ea?.EmployeeName</td>
+                            <td>@ea?.AssignedDate.ToString("dd MMM yyyy")</td>
                             <td>@(ea.ReturnedDate.HasValue? ea.ReturnedDate.Value.ToString("dd MMM yyyy") : "-")</td>
-                            <td>@ea.Status</td>
+                            <td>
+                                @if (@ea.Status == "Assigned")
+                                {
+                                    <span class="badge bg-warning">Assigned</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">Returned</span>
+                                }
+                            </td>
                         </tr>
                     }
                 </tbody>

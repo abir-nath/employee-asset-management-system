@@ -1,4 +1,4 @@
-﻿@model EmployeeAssetManagementSystem.Models.Employee
+﻿@model EmployeeAssetManagementSystem.ViewModels.EmployeeDetailsViewModel
 
 @{
     ViewData["Title"] = "Employee Details";
@@ -33,7 +33,7 @@
     </div>
 </div>
 
-@if (Model.EmployeeAssets != null && Model.EmployeeAssets.Any())
+@if (Model.Assets != null && Model.Assets.Any())
 {
     <div class="card shadow-sm border-0">
         <div class="card-body p-0">
@@ -49,14 +49,23 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var ea in Model.EmployeeAssets)
+                    @foreach (var ea in Model.Assets)
                     {
                         <tr>
-                            <td>@ea.Asset?.AssetName</td>
-                            <td>@ea.Asset?.AssetType</td>
-                            <td>@ea.AssignedDate.ToString("dd MMM yyyy")</td>
+                            <td>@ea?.AssetName</td>
+                            <td>@ea?.AssetType</td>
+                            <td>@ea?.AssignedDate.ToString("dd MMM yyyy")</td>
                             <td>@(ea.ReturnedDate.HasValue? ea.ReturnedDate.Value.ToString("dd MMM yyyy") : "-")</td>
-                            <td>@ea.Status</td>
+                            <td>
+                                @if (@ea.Status == "Assigned")
+                                {
+                                    <span class="badge bg-warning">Assigned</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">Returned</span>
+                                }
+                            </td>
                         </tr>
                     }
                 </tbody>

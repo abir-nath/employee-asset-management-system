@@ -1,5 +1,6 @@
 ﻿using EmployeeAssetManagementSystem.Data;
 using EmployeeAssetManagementSystem.Models;
+using EmployeeAssetManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -107,10 +108,28 @@ public class AssetsController : Controller
     public async Task<IActionResult> Details(int id)
     {
         var asset = await _context.Assets
-            .AsNoTracking()
-            .Include(e => e.EmployeeAssets)
-                .ThenInclude(ae => ae.Employee)
-            .FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
+        .AsNoTracking()
+        .Where(a => a.Id == id && !a.IsDeleted)
+        .Select(a => new AssetDetailsViewModel
+        {
+            Id = a.Id,
+            AssetName = a.AssetName,
+            SerialNumber = a.SerialNumber,
+            AssetType = a.AssetType,
+            PurchaseDate = a.PurchaseDate,
+            IsAvailable = a.IsAvailable,
+            EmployeeAssets = a.EmployeeAssets
+                .Select(ea => new AssetEmployeeViewModel
+                {
+                    EmployeeId = ea.EmployeeId,
+                    EmployeeName = ea.Employee.FullName,
+                    AssignedDate = ea.AssignedDate,
+                    ReturnedDate = ea.ReturnedDate,
+                    Status = ea.Status
+                })
+                .ToList()
+        })
+        .FirstOrDefaultAsync();
 
         if (asset == null)
         {
