@@ -1,8 +1,124 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model EmployeeAssetManagementSystem.Models.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Dashboard Overview</h2>
+        <span class="text-muted">@DateTime.Now.ToString("dddd, dd MMM yyyy")</span>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-lg rounded-4 text-white"
+                 style="background: linear-gradient(135deg, #4e73df, #224abe);">
+                <div class="card-body">
+                    <h6 class="text-uppercase small">Total Employees</h6>
+                    <h2 class="fw-bold display-6">@Model.TotalEmployees</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-lg rounded-4 text-white"
+                 style="background: linear-gradient(135deg, #1cc88a, #13855c);">
+                <div class="card-body">
+                    <h6 class="text-uppercase small">Total Assets</h6>
+                    <h2 class="fw-bold display-6">@Model.TotalAssets</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-lg rounded-4 text-white"
+                 style="background: linear-gradient(135deg, #e74a3b, #be2617);">
+                <div class="card-body">
+                    <h6 class="text-uppercase small">Assigned Assets</h6>
+                    <h2 class="fw-bold display-6">@Model.AssignedAssets</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-lg rounded-4 text-white"
+                 style="background: linear-gradient(135deg, #36b9cc, #258391);">
+                <div class="card-body">
+                    <h6 class="text-uppercase small">Available Assets</h6>
+                    <h2 class="fw-bold display-6">@Model.AvailableAssets</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card shadow-lg border-0 rounded-4 mt-5">
+        <div class="card-header bg-white border-0 rounded-top-4 fw-semibold">
+            <h5 class="mb-0">Recently Assigned Assets</h5>
+        </div>
+
+        <div class="card-body p-0">
+
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Employee</th>
+                        <th>Asset</th>
+                        <th>Assigned Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.RecentAssignments.Any())
+                    {
+                        foreach (var item in Model.RecentAssignments)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-semibold">
+                                    @item.Employee?.FullName
+                                </td>
+
+                                <td>
+                                    @item.Asset?.AssetName
+                                </td>
+
+                                <td>
+                                    @item.AssignedDate.ToString("dd MMM yyyy")
+                                </td>
+
+                                <td>
+                                    @if (item.Status == "Returned")
+                                    {
+                                        <span class="badge bg-success px-3 py-2 rounded-pill">
+                                            Returned
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">
+                                            Assigned
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">
+                                No recent assignments found.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
 </div>
