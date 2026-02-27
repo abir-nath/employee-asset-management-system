@@ -1,32 +1,42 @@
-using System.Diagnostics;
-using EmployeeAssetManagementSystem.Models;
+using EmployeeAssetManagementSystem.Data;
+using EmployeeAssetManagementSystem.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-namespace EmployeeAssetManagementSystem.Controllers
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly ApplicationDbContext _context;
+
+    public HomeController(ApplicationDbContext context)
     {
-        private readonly ILogger<HomeController> _logger;
+        _context = context;
+    }
 
-        public HomeController(ILogger<HomeController> logger)
+    public async Task<IActionResult> Index()
+    {
+        var model = new DashboardViewModel
         {
-            _logger = logger;
-        }
+            TotalEmployees = await _context.Employees
+                .CountAsync(e => e.IsActive && !e.IsDeleted),
 
-        public IActionResult Index()
-        {
-            return View();
-        }
+            TotalAssets = await _context.Assets
+                .CountAsync(a => !a.IsDeleted),
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+            AssignedAssets = await _context.Assets
+                .CountAsync(a => !a.IsDeleted && !a.IsAvailable),
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+            AvailableAssets = await _context.Assets
+                .CountAsync(a => !a.IsDeleted && a.IsAvailable),
+
+            RecentAssignments = await _context.EmployeeAssets
+                .Include(ea => ea.Employee)
+                .Include(ea => ea.Asset)
+                .Where(ea => !ea.Employee.IsDeleted && !ea.Asset.IsDeleted)
+                .OrderByDescending(ea => ea.AssignedDate)
+                .Take(5)
+                .ToListAsync()
+        };
+
+        return View(model);
     }
 }
