@@ -9,17 +9,15 @@
     <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert" id="successAlert">
         <i class="bi bi-check-circle me-2"></i>
         @TempData["SuccessMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        @* <button type="button" class="btn-close" data-bs-dismiss="alert"></button> *@
     </div>
 }
 
 @if (TempData["DeleteMessage"] != null)
 {
-    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert" id="deleteAlert">
         <i class="bi bi-check-circle me-2"></i>
         @TempData["DeleteMessage"]
-
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 }
 
@@ -146,7 +144,16 @@
                 alert.style.opacity = "0";
                 setTimeout(() => alert.remove(), 500);
             }
-        }, 4000);
+        }, 2000);
+
+        setTimeout(function () {
+            var alert = document.getElementById('deleteAlert');
+            if (alert) {
+                alert.style.transition = "opacity 0.5s";
+                alert.style.opacity = "0";
+                setTimeout(() => alert.remove(), 500);
+            }
+        }, 2000);
 
         var deleteModal = document.getElementById('deleteModal');
         deleteModal.addEventListener('show.bs.modal', function (event) {
