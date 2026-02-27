@@ -1,0 +1,92 @@
+﻿@model IEnumerable<EmployeeAssetManagementSystem.Models.EmployeeAsset>
+
+@{
+    ViewData["Title"] = "Assign Assets";
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert" id="successAlert">
+        <i class="bi bi-check-circle me-2"></i>
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="fw-bold mb-0">Asset Assignments</h3>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> Assign Asset
+    </a>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <table class="table table-hover table-bordered align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Employee</th>
+                    <th>Asset</th>
+                    <th>Assigned Date</th>
+                    <th>Returned Date</th>
+                    <th>Status</th>
+                    <th width="130" class="text-center">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Employee.FullName</td>
+                            <td>@item.Asset.AssetName</td>
+                            <td>@item.AssignedDate.ToString("dd MMM yyyy")</td>
+                            <td>@(item.ReturnedDate.HasValue? item.ReturnedDate.Value.ToString("dd MMM yyyy") : "-")</td>
+                            <td>
+                                @if (item.Status == "Assigned")
+                                {
+                                    <span class="badge bg-warning">Assigned</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">Returned</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning me-1" title="Edit">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <button class="btn btn-sm btn-danger" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center text-muted p-4">
+                            No assignments found.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        setTimeout(function () {
+            var alert = document.getElementById('successAlert');
+            if (alert) {
+                alert.style.transition = "opacity 0.5s";
+                alert.style.opacity = "0";
+                setTimeout(() => alert.remove(), 500);
+            }
+        }, 4000);
+    </script>
+}
