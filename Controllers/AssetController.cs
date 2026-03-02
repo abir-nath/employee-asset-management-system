@@ -1,11 +1,14 @@
 ﻿using EmployeeAssetManagementSystem.Data;
 using EmployeeAssetManagementSystem.Models;
 using EmployeeAssetManagementSystem.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeAssetManagementSystem.Controllers;
+
+[Authorize]
 public class AssetsController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -15,6 +18,7 @@ public class AssetsController : Controller
         _context = context;
     }
 
+    [Authorize(Roles = "Admin,Employee")]
     public async Task<IActionResult> Index()
     {
         var assets = await _context.Assets
@@ -24,6 +28,7 @@ public class AssetsController : Controller
         return View(assets);
     }
 
+    [Authorize(Roles = "Admin")]
     public IActionResult Create()
     {
         ViewData["AssetTypes"] = new SelectList(new[] { "Monitor", "Laptop", "Keyboard", "Mouse", "Headset" });
@@ -31,6 +36,7 @@ public class AssetsController : Controller
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Asset asset)
     {
@@ -58,6 +64,7 @@ public class AssetsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(int id)
     {
         var asset = await _context.Assets.FindAsync(id);
@@ -73,6 +80,7 @@ public class AssetsController : Controller
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, Asset asset)
     {
@@ -105,6 +113,7 @@ public class AssetsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = "Admin,Employee")]
     public async Task<IActionResult> Details(int id)
     {
         var asset = await _context.Assets
@@ -140,6 +149,7 @@ public class AssetsController : Controller
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {
