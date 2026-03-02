@@ -1,5 +1,6 @@
 using EmployeeAssetManagementSystem.Data;
 using EmployeeAssetManagementSystem.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,7 @@ public class HomeController : Controller
         _context = context;
     }
 
+    [Authorize(Roles = "Admin,Employee")]
     public async Task<IActionResult> Index()
     {
         var model = new DashboardViewModel
