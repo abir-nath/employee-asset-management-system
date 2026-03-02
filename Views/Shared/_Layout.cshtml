@@ -1,4 +1,9 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity
+@using EmployeeAssetManagementSystem.Models
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
     var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
 }
 
@@ -156,6 +161,15 @@
             <span class="menu-text ms-2">Assign Assets</span>
         </a>
 
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-controller="Account" asp-action="Register"
+               class="nav-link @(currentController == "Account" ? "active-link" : "")">
+                <i class="bi bi-person-plus"></i>
+                <span class="menu-text ms-2">Create User</span>
+            </a>
+        }
+
     </div>
 
     <!-- CONTENT -->
@@ -174,15 +188,23 @@
             <!-- USER RIGHT CORNER -->
             <div class="user-box d-flex align-items-center ms-auto">
 
-    <div class="text-end me-3">
-        <div>John Doe</div>
-        <small class="text-muted">Administrator</small>
-    </div>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    var user = await UserManager.GetUserAsync(User);
+                    var roles = await UserManager.GetRolesAsync(user);
+                    var roleName = roles.FirstOrDefault();
+
+                    <div class="text-end me-3">
+                        <div>@user.Email</div>
+                        <small class="text-muted">@roleName</small>
+                    </div>
+                }
 
     <i class="bi bi-person-circle fs-4 me-3 text-secondary"></i>
 
     <!-- LOGOUT BUTTON -->
-    <form asp-controller="Account" asp-action="Logout" method="post" class="mb-0">
+        <form asp-controller="Account" asp-action="Logout" method="post" class="mb-0">
+        @Html.AntiForgeryToken()
         <button type="submit" class="btn btn-outline-danger btn-sm">
             <i class="bi bi-box-arrow-right me-1"></i> Logout
         </button>

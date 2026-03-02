@@ -1,11 +1,13 @@
 ﻿using EmployeeAssetManagementSystem.Data;
 using EmployeeAssetManagementSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using EmployeeAssetManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeAssetManagementSystem.Controllers;
 
+[Authorize]
 public class EmployeesController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -15,6 +17,7 @@ public class EmployeesController : Controller
         _context = context;
     }
 
+    [Authorize(Roles = "Admin,Employee")]
     public async Task<IActionResult> Index()
     {
         var employees = await _context.Employees
@@ -24,12 +27,14 @@ public class EmployeesController : Controller
         return View(employees);
     }
 
+    [Authorize(Roles = "Admin")]
     public IActionResult Create()
     {
         return View();
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Employee employee)
     {
@@ -46,6 +51,7 @@ public class EmployeesController : Controller
         return View(employee);
     }
 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null)
@@ -64,6 +70,7 @@ public class EmployeesController : Controller
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, Employee employee)
     {
@@ -99,6 +106,7 @@ public class EmployeesController : Controller
         return View(employee);
     }
 
+    [Authorize(Roles = "Admin,Employee")]
     public async Task<IActionResult> Details(int id)
     {
         var employee = await _context.Employees
@@ -136,6 +144,7 @@ public class EmployeesController : Controller
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {

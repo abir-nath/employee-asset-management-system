@@ -23,9 +23,12 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h3 class="fw-bold mb-0">Employees</h3>
-    <a asp-action="Create" class="btn btn-primary">
-        <i class="bi bi-plus-circle me-1"></i> Add Employee
-    </a>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i> Add Employee
+        </a>
+    }
 </div>
 
 <div class="card shadow-sm border-0">
@@ -39,7 +42,16 @@
                     <th>Department</th>
                     <th>Joining Date</th>
                     <th>Status</th>
-                    <th width="130" class="text-center">Actions</th>
+                    <th width="130" class="text-center">
+                        @if (User.IsInRole("Admin"))
+                        {
+                            @:Actions
+                        }
+                        else
+                        {
+                            @:View
+                        }
+                    </th>
                 </tr>
             </thead>
 
@@ -73,19 +85,22 @@
                                 </a>
 
 
-                                <a asp-action="Edit" asp-route-id="@item.Id"
-                                   class="btn btn-sm btn-warning">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
-                                                                
-                                <button type="button" class="btn btn-sm btn-danger"
-                                        title="Delete"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#deleteModal"
-                                        data-employee-name="@item.FullName"
-                                        data-delete-url="@Url.Action("Delete", "Employees", new { id = item.Id })">
-                                    <i class="bi bi-trash"></i>
-                                </button>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-warning me-1">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+
+                                    <button type="button" class="btn btn-sm btn-danger"
+                                            title="Delete"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal"
+                                            data-employee-name="@item.FullName"
+                                            data-delete-url="@Url.Action("Delete", "Employees", new { id = item.Id })">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                }
                             </td>
                         </tr>
                     }

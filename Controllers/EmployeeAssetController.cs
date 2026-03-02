@@ -1,12 +1,14 @@
 ﻿using EmployeeAssetManagementSystem.Data;
 using EmployeeAssetManagementSystem.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeAssetManagementSystem.Controllers;
 
+[Authorize]
 public class EmployeeAssetsController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -16,6 +18,7 @@ public class EmployeeAssetsController : Controller
         _context = context;
     }
 
+    [Authorize(Roles = "Admin,Employee")]
     public async Task<IActionResult> Index()
     {
         var assignments = await _context.EmployeeAssets
@@ -27,6 +30,7 @@ public class EmployeeAssetsController : Controller
         return View(assignments);
     }
 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create()
     {
         ViewData["Employees"] = new SelectList(
@@ -41,6 +45,7 @@ public class EmployeeAssetsController : Controller
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(EmployeeAsset employeeAsset)
     {
@@ -95,6 +100,7 @@ public class EmployeeAssetsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(int id)
     {
         var employeeAsset = await _context.EmployeeAssets.FindAsync(id);
@@ -114,6 +120,7 @@ public class EmployeeAssetsController : Controller
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(EmployeeAsset employeeAsset)
     {

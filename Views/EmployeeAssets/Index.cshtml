@@ -15,9 +15,12 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h3 class="fw-bold mb-0">Asset Assignments</h3>
-    <a asp-action="Create" class="btn btn-primary">
-        <i class="bi bi-plus-circle me-1"></i> Assign Asset
-    </a>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i> Assign Asset
+        </a>
+    }
 </div>
 
 <div class="card shadow-sm border-0">
@@ -30,7 +33,16 @@
                     <th>Assigned Date</th>
                     <th>Returned Date</th>
                     <th>Status</th>
-                    <th width="130" class="text-center">Actions</th>
+                    <th width="130" class="text-center">
+                        @if (User.IsInRole("Admin"))
+                        {
+                            @:Actions
+                        }
+                        else
+                        {
+                            @:View
+                        }
+                    </th>
                 </tr>
             </thead>
 
@@ -55,9 +67,13 @@
                                 }
                             </td>
                             <td class="text-center">
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning me-1" title="Edit">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-warning me-1" title="Edit">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                }
                             </td>
                         </tr>
                     }
